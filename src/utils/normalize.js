@@ -5,6 +5,7 @@
  * implementation_handoff.md の「フィールド名マッピング」セクションに基づく
  */
 const COLUMN_TO_API_KEY = {
+  '最終更新日': 'sheet_updated_at',
   'Journal_ID': 'journal_id',
   'Journal_Title': 'journal_title',
   'Journal_Title_Alias': 'journal_title_alias',

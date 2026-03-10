@@ -31,10 +31,12 @@ async function generate() {
   console.log(`静的 JSON 生成開始 / モード: ${useTestMode ? 'テスト' : '本番'} / シート: ${sheetId}`);
 
   const { headers, rows } = await readScpjSheet(auth, sheetId, sheetName);
-  console.log(`SCPJ データ読み込み: ${rows.length} 件`);
+  // rows[0] は日本語ラベル行（ジャーナルID等）なのでスキップ
+  const dataRows = rows.slice(1);
+  console.log(`SCPJ データ読み込み: ${dataRows.length} 件`);
 
   // 全件を API オブジェクトに変換
-  const items = rows
+  const items = dataRows
     .filter(row => row.some(cell => cell !== '' && cell != null))
     .map(row => rowToApiObject(headers, row));
 
