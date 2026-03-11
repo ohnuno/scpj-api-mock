@@ -1,6 +1,0 @@
-node_modules/
-.env
-*.json.key
-*-service-account*.json
-scpj-api-*.json
-.DS_Store
