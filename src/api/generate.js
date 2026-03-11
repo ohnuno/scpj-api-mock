@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { getAuthClient, getConfig } = require('../utils/config');
 const { readScpjSheet } = require('../batch/sheets');
-const { rowToApiObject } = require('../utils/normalize');
+const { rowToApiObject, normalizeISSN } = require('../utils/normalize');
 const { retrieve } = require('./retrieve');
 const { retrieveById } = require('./retrieve_by_id');
 const { objectIds } = require('./object_ids');
@@ -62,6 +62,47 @@ async function generate() {
   const retrieveJsonPath = path.join(outputDir, 'retrieve.json');
   fs.writeFileSync(retrieveJsonPath, JSON.stringify(retrieveData, null, 2), 'utf-8');
   console.log(`retrieve.json 生成完了`);
+
+  // by_id: journal_id は一意 → 単体オブジェクトで書き出し
+  const byIdDir = path.join(outputDir, 'by_id');
+  fs.mkdirSync(byIdDir, { recursive: true });
+  let byIdCount = 0;
+  for (const item of items) {
+    if (!item.journal_id) continue;
+    fs.writeFileSync(
+      path.join(byIdDir, `${item.journal_id}.json`),
+      JSON.stringify(item, null, 2),
+      'utf-8'
+    );
+    byIdCount++;
+  }
+  console.log(`by_id 生成完了: ${byIdCount} 件`);
+
+  // by_issn: ISSN は誌名変更等で重複する可能性あり → Map で集約後に { items: [...] } で書き出し
+  const byIssnDir = path.join(outputDir, 'by_issn');
+  fs.mkdirSync(byIssnDir, { recursive: true });
+  const issnMap = new Map();
+  for (const item of items) {
+    for (const issnField of ['issn_l', 'pissn', 'eissn']) {
+      const raw = item[issnField];
+      if (!raw) continue;
+      const normalized = normalizeISSN(raw);
+      if (!normalized || normalized.length < 8) continue;
+      if (!issnMap.has(normalized)) issnMap.set(normalized, []);
+      // 同一 journal_id の重複追加を防ぐ
+      if (!issnMap.get(normalized).some(i => i.journal_id === item.journal_id)) {
+        issnMap.get(normalized).push(item);
+      }
+    }
+  }
+  for (const [issn, issnItems] of issnMap) {
+    fs.writeFileSync(
+      path.join(byIssnDir, `${issn}.json`),
+      JSON.stringify({ items: issnItems }, null, 2),
+      'utf-8'
+    );
+  }
+  console.log(`by_issn 生成完了: ${issnMap.size} ファイル`);
 
   console.log(`静的 JSON 生成完了 → ${outputDir}`);
 }
