@@ -21,7 +21,7 @@ async function generate() {
   const auth = await getAuthClient();
   const cfg = await getConfig(auth, CONFIG_SHEET_ID);
 
-  const useTestMode = cfg['USE_TEST_MODE'] === 'true';
+  const useTestMode = (cfg['USE_TEST_MODE'] || '').toLowerCase() === 'true';
   const sheetId = useTestMode ? cfg['TEST_SHEET_ID'] : cfg['SCPJ_SHEET_ID'];
   const sheetName = useTestMode ? cfg['TEST_SHEET_NAME'] : cfg['SCPJ_SHEET_NAME'];
   const outputDir = useTestMode

@@ -10,11 +10,21 @@ const { google } = require('googleapis');
  */
 async function getMapping(auth, configSheetId) {
   const sheets = google.sheets({ version: 'v4', auth });
-  const res = await sheets.spreadsheets.values.get({
-    spreadsheetId: configSheetId,
-    range: 'mapping!A:G',
-  });
-  const rows = res.data.values || [];
+  let rows;
+  try {
+    const res = await sheets.spreadsheets.values.get({
+      spreadsheetId: configSheetId,
+      range: 'mapping!A:G',
+    });
+    rows = res.data.values || [];
+  } catch (e) {
+    // mapping シートが存在しない場合は空配列を返す
+    if (e.status === 400 || (e.errors && e.errors[0]?.reason === 'badRequest')) {
+      console.warn('mapping シートが見つかりません。マッピングなしで続行します。');
+      return [];
+    }
+    throw e;
+  }
   const [_header, ...dataRows] = rows;
   return dataRows
     .filter(row => row[5] === 'TRUE')
