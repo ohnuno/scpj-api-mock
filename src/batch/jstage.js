@@ -7,10 +7,27 @@
  *   引数: issn(string), since(ISO8601 string | null)
  *   戻り値: { [fieldName]: value } | null
  *
- * J-STAGE API の実装後は以下の手順で本番実装に差し替える:
- *   1. 実際の J-STAGE API のフィールド名を確認する
- *   2. mapping シートの map_016〜map_019 の D列を実フィールド名に更新し、F列を TRUE に変更する
- *   3. 下記のモック実装を本番実装に置き換える（コメントアウトされた本番実装を参照）
+ * --- J-STAGE WebAPI 仕様メモ ---
+ * エンドポイント: https://api.jstage.jst.go.jp/searchapi/do
+ * サービス番号  : service=2（巻号一覧取得）
+ * ISSNパラメータ: issn={Print ISSN} または eissn={Online ISSN}
+ * レスポンス形式: XML（Atom形式）
+ *
+ * XMLの主要フィールド（巻号一覧取得レスポンス）:
+ *   prism:issn      : Print ISSN
+ *   prism:eIssn     : Online ISSN
+ *   vols_title/en   : ジャーナルタイトル（英語）
+ *   vols_title/ja   : ジャーナルタイトル（日本語）
+ *   publisher/name  : 発行者名
+ *   publisher/url   : 発行者URL
+ *   pubyear         : 発行年
+ *
+ * OA関連フィールドは現在未追加（J-STAGEが追加予定・フィールド名未定）。
+ * OA項目名確定後、以下の手順で本番実装に切り替える:
+ *   1. mapping シートの map_016〜map_019 の D列を実フィールド名に更新
+ *   2. F列を FALSE → TRUE に変更
+ *   3. 下記モック実装を本番実装に置き換え
+ *      （レスポンスがXMLのため xml2js 等のパーサーが必要）
  */
 
 /**
@@ -21,7 +38,7 @@
  * @returns {Promise<object|null>}
  */
 async function fetchJstageData(issn, since, cfg) {
-  // モック実装（J-STAGE API 実装前）
+  // モック実装（J-STAGE OAフィールド名確定まで維持）
   // mapping シートで JSTAGE の有効フラグ（F列）が FALSE の間はこの値は使われない
   return {
     oa_type: 'MOCK_OA_TYPE',
@@ -32,17 +49,27 @@ async function fetchJstageData(issn, since, cfg) {
   };
 }
 
-// 本番実装（J-STAGE API 実装後に上記モックと差し替え）
-// フィールド名は mapping シートの D列に合わせて更新すること
+// 本番実装雛形（OAフィールド名確定後に上記モックと差し替え）
+// XMLレスポンスを扱うため xml2js 等のパーサー追加が必要（npm install xml2js）
+//
+// const xml2js = require('xml2js');
+// const { fetchWithRetry } = require('./opf');
 //
 // async function fetchJstageData(issn, since, cfg) {
-//   const { fetchWithRetry } = require('./opf');
-//   const base = cfg['JSTAGE_API_BASE_URL'];
-//   const url = `${base}/journals?issn=${encodeURIComponent(issn)}${since ? `&updated_after=${since}` : ''}`;
+//   const base = cfg['JSTAGE_API_BASE_URL'];  // https://api.jstage.jst.go.jp/searchapi/do
+//   const url = `${base}?service=2&issn=${encodeURIComponent(issn)}`;
 //   try {
 //     const res = await fetchWithRetry(url);
 //     if (!res.ok) return null;
-//     return res.json();
+//     const xml = await res.text();
+//     const parsed = await xml2js.parseStringPromise(xml, { explicitArray: false });
+//     const entry = parsed?.feed?.entry;
+//     if (!entry) return null;
+//     // OAフィールド名が確定したらここで取得・返却する
+//     return {
+//       // 例: oa_type: entry['jstage:oaType'],
+//       // ※ 実フィールド名は J-STAGE の仕様確定後に更新
+//     };
 //   } catch {
 //     return null;
 //   }

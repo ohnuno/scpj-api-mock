@@ -610,17 +610,43 @@ function hasDifference(scpjValue, sourceValue) {
 差異が検出されたフィールドはSCPJを手動で確認・修正してください。
 ```
 
-### J-STAGE仮実装
+### J-STAGE API 仕様
 
-J-STAGE APIの実装前はモック関数で動作確認する。本番差し替えはモック関数を実装関数に置き換えるだけでよいようにインターフェースを統一すること。
+**エンドポイント：**
+```
+GET https://api.jstage.jst.go.jp/searchapi/do?service=2&issn={ISSN}
+```
+
+**レスポンス形式：** XML（Atom形式）
+
+**主要XMLフィールド（巻号一覧取得 / p.5-8）：**
+
+| XMLフィールド | 内容 |
+|---|---|
+| `prism:issn` | Print ISSN（マッチングキー） |
+| `prism:eIssn` | Online ISSN |
+| `vols_title/en`, `vols_title/ja` | ジャーナルタイトル |
+| `publisher/name/en`, `publisher/name/ja` | 発行者名 |
+| `publisher/url/en`, `publisher/url/ja` | 発行者URL |
+| `pubyear` | 発行年 |
+| OAフィールド | **追加予定・項目名未定** |
+
+**OA有効化手順（フィールド名確定後）：**
+
+1. `mapping`シートの `map_016`〜`map_019` を更新
+   - D列：実フィールド名に変更
+   - F列：`FALSE` → `TRUE`
+2. `package.json` に `xml2js` を追加：`npm install xml2js`
+3. `src/batch/jstage.js` のモック実装を本番実装（コメントアウト部分）と差し替え
+4. コードの変更は最小限（jstage.js の差し替えのみ）
+
+### J-STAGE仮実装（現在の状態）
+
+OAフィールド名が未定のためモック実装を維持。mapping の F列=FALSE なのでモック値は実際には使用されない。
 
 ```javascript
-// インターフェース定義（モック・本番共通）
-// 引数: issn(string), since(ISO8601 string | null)
-// 戻り値: { [fieldName]: value } | null
-
-// モック実装（J-STAGE API実装前）
-async function fetchJstageData(issn, since) {
+// 現在のモック実装（src/batch/jstage.js）
+async function fetchJstageData(issn, since, cfg) {
   return {
     oa_type: 'MOCK_OA_TYPE',
     ir_available: 'MOCK_IR',
@@ -629,14 +655,6 @@ async function fetchJstageData(issn, since) {
     updated_at: new Date().toISOString(),
   };
 }
-
-// 本番実装（J-STAGE API実装後に差し替え。フィールド名はmappingシートに合わせて更新）
-// async function fetchJstageData(issn, since) {
-//   const url = `${cfg['JSTAGE_API_BASE_URL']}/journals?issn=${issn}${since ? `&updated_after=${since}` : ''}`;
-//   const res = await fetchWithRetry(url);
-//   if (!res.ok) return null;
-//   return res.json();
-// }
 ```
 
 ---
