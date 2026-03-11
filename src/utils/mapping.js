@@ -14,7 +14,7 @@ async function getMapping(auth, configSheetId) {
   try {
     const res = await sheets.spreadsheets.values.get({
       spreadsheetId: configSheetId,
-      range: 'mapping!A:G',
+      range: 'mapping!A:H',
     });
     rows = res.data.values || [];
   } catch (e) {
@@ -31,10 +31,11 @@ async function getMapping(auth, configSheetId) {
     .map(row => ({
       id: row[0],
       scpjColumn: row[1],
-      source: row[2],       // 'OPF' or 'JSTAGE'
+      source: row[2],       // 'JSTAGE' etc.
       sourcePath: row[3],
       transform: row[4],
       notes: row[6],
+      overwrite: (row[7] || '').toLowerCase() === 'true',  // H列: TRUE=上書き, FALSE/空=補完のみ
     }));
 }
 

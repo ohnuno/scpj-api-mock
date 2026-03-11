@@ -62,6 +62,7 @@ const COLUMN_TO_API_KEY = {
   'Submitted_Terms_Notes': 'submitted_terms_notes',
   'Applicability': 'applicability',
   'Update': 'updated_at',
+  'JSTAGE_cdjournal': 'cdjournal',
 };
 
 /**

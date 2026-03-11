@@ -63,16 +63,29 @@ function processJournalRow({ headers, row, colIndex, rowNumber, sheetName, sourc
     const scpjValue = row[scpjColIdx] ?? '';
     const transformedStr = String(transformed);
 
+    const colLetter = columnIndexToLetter(scpjColIdx);
     if (scpjValue === '') {
-      // 空欄 → 補完
-      // 行番号は 1-indexed、ヘッダー行が1行目なのでデータは rowNumber（既に +2 済みで渡す）
-      const colLetter = columnIndexToLetter(scpjColIdx);
+      // 空欄 → 補完書き込み
       updates.push({
         range: `${sheetName}!${colLetter}${rowNumber}`,
         values: [[transformedStr]],
       });
-    } else if (hasDifference(scpjValue, transformedStr)) {
-      // 値あり → 差異記録
+    } else if (mapping.overwrite && hasDifference(scpjValue, transformedStr)) {
+      // 上書きフラグON かつ差異あり → 上書き書き込み＋差異記録
+      updates.push({
+        range: `${sheetName}!${colLetter}${rowNumber}`,
+        values: [[transformedStr]],
+      });
+      diffs.push({
+        journalId,
+        journalTitle,
+        field: scpjColumn,
+        scpjValue,
+        sourceValue: transformedStr,
+        source,
+      });
+    } else if (!mapping.overwrite && hasDifference(scpjValue, transformedStr)) {
+      // 上書きフラグOFF かつ差異あり → 差異記録のみ
       diffs.push({
         journalId,
         journalTitle,
