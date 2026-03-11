@@ -88,10 +88,14 @@ async function generate() {
       if (!raw) continue;
       const normalized = normalizeISSN(raw);
       if (!normalized || normalized.length < 8) continue;
-      if (!issnMap.has(normalized)) issnMap.set(normalized, []);
-      // 同一 journal_id の重複追加を防ぐ
-      if (!issnMap.get(normalized).some(i => i.journal_id === item.journal_id)) {
-        issnMap.get(normalized).push(item);
+      // ハイフンあり（1882-7764）とハイフンなし（18827764）の両方に登録
+      const keys = [normalized, normalized.replace(/-/g, '')];
+      for (const key of keys) {
+        if (!issnMap.has(key)) issnMap.set(key, []);
+        // 同一 journal_id の重複追加を防ぐ
+        if (!issnMap.get(key).some(i => i.journal_id === item.journal_id)) {
+          issnMap.get(key).push(item);
+        }
       }
     }
   }
