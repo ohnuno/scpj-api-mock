@@ -3,7 +3,6 @@
 const { getAuthClient, getConfig, setConfigValue } = require('../utils/config');
 const { getMapping, resolveFieldPath, applyTransform } = require('../utils/mapping');
 const { readScpjSheet, sheetsBatchUpdate } = require('./sheets');
-const { fetchOPFByISSN } = require('./opf');
 const { fetchJstageData } = require('./jstage');
 const { processJournalRow } = require('./diff');
 const { sendReport, buildDiffReport, buildErrorReport } = require('./report');
@@ -64,14 +63,6 @@ async function main() {
     processedCount++;
     const rowNumber = i + 2; // ヘッダー行が1行目なのでデータは2行目〜
 
-    // OPF データ取得
-    let opfData = null;
-    try {
-      opfData = await fetchOPFByISSN(cfg['OPF_RETRIEVE_URL'], issn);
-    } catch (e) {
-      console.warn(`OPF fetch 失敗 (ISSN: ${issn}): ${e.message}`);
-    }
-
     // J-STAGE データ取得
     let jstageData = null;
     try {
@@ -81,7 +72,6 @@ async function main() {
     }
 
     const sourceData = {
-      OPF: opfData,
       JSTAGE: jstageData,
     };
 

@@ -2,7 +2,12 @@
 
 ## 概要
 
-本ドキュメントは、SCPJスプレッドシートのデータを外部向けに配信するAPIと、J-STAGE APIと連携してデータを補完するバッチ処理システムの実装引継ぎ用ドキュメントです。
+本ドキュメントは、SCPJスプレッドシートのデータをOPF API互換形式で外部向けに配信するAPIと、J-STAGE APIと連携してデータを補完するバッチ処理システムの実装引継ぎ用ドキュメントです。
+
+**重要な設計方針：**
+- 本システムはOPF APIの**スキーマ・エンドポイント構成に準拠**して構築するが、OPF APIへの接続は行わない
+- SCPJに登録されているデータはOPFに登録されていないため、OPFからのデータ取得は不要
+- 外部APIからのデータ補完ソースは**J-STAGEのみ**
 
 ---
 
@@ -14,8 +19,7 @@
 [変数・マッピング管理スプレッドシート（Google Sheets）]
         ↕ Google Sheets API（読み込み・LAST_BATCH_RUN書き込み）
 [GitHub Actions（毎日定期実行）]
-    ├── OPF API    → SCPJへの差分補完
-    ├── J-STAGE API → SCPJへの差分補完（実装後）
+    ├── J-STAGE API → SCPJへの差分補完
     └── 差異レポート → 管理者メール送信（SendGrid）
         ↓
 [静的JSON再生成 → GitHub Pagesにコミット・プッシュ]
@@ -78,10 +82,10 @@ Claude Codeと管理者が協働して以下の順序で進めること。各フ
 
 ---
 
-### Phase 3：OPF連携バッチ実装
+### Phase 3：J-STAGE連携バッチ実装
 
 **作業内容：**
-- OPF APIからISSNでデータを取得する関数を実装する
+- J-STAGE APIからISSNでデータを取得する関数を実装する（現在はモック）
 - マッピングシートに基づいてSCPJへの補完・差異チェックを行うバッチを実装する
 - バッチワークフロー（`batch.yml`）を実装する
 - `workflow_dispatch`（手動実行）でテスト環境（`USE_TEST_MODE=true`）の動作確認をする
@@ -145,7 +149,6 @@ scpj-api/
 │   │   └── object_ids.js     # /object_ids のロジック
 │   ├── batch/
 │   │   ├── index.js          # バッチエントリポイント
-│   │   ├── opf.js            # OPF API連携
 │   │   ├── jstage.js         # J-STAGE API連携（モック含む）
 │   │   ├── diff.js           # 差異チェック・記号正規化
 │   │   ├── report.js         # メールレポート生成・送信（SendGrid）
@@ -322,7 +325,7 @@ async function sendReport(apiKey, to, from, subject, body) {
 
 - バッチ処理はtry-catchで全体を囲み、エラー発生時もメールでエラー内容を管理者に通知する
 - `LAST_BATCH_RUN`は**バッチ正常完了時のみ**更新する（途中失敗時は更新しない）
-- OPF/J-STAGE APIが5xx系を返した場合は3回リトライ（指数バックオフ）し、それでも失敗したらエラーメールを送信してバッチを終了する
+- J-STAGE APIが5xx系を返した場合は3回リトライ（指数バックオフ）し、それでも失敗したらエラーメールを送信してバッチを終了する
 
 ```javascript
 async function fetchWithRetry(url, options = {}, maxRetries = 3) {
@@ -372,9 +375,6 @@ async function getConfig(auth, configSheetId) {
 | `TEST_SHEET_NAME` | シート名 | |
 | `JSTAGE_API_BASE_URL` | J-STAGE APIのベースURL | 追加予定 |
 | `JSTAGE_API_VERSION` | APIバージョン | 追加予定 |
-| `OPF_RETRIEVE_URL` | `https://api.openpolicyfinder.jisc.ac.uk/retrieve` | |
-| `OPF_RETRIEVE_BY_ID_URL` | `https://api.openpolicyfinder.jisc.ac.uk/retrieve_by_id` | |
-| `OPF_OBJECT_IDS_URL` | `https://api.openpolicyfinder.jisc.ac.uk/object_ids` | |
 | `REPORT_EMAIL_TO` | 管理者メールアドレス | |
 | `REPORT_EMAIL_FROM` | 送信元メールアドレス | |
 | `LAST_BATCH_RUN` | ISO8601形式の日時文字列 | バッチ正常完了時のみ自動更新 |
@@ -386,21 +386,6 @@ async function getConfig(auth, configSheetId) {
 
 | A列（マッピングID） | B列（SCPJ列名） | C列（データソース） | D列（ソースフィールドパス） | E列（変換ルール） | F列（有効フラグ） | G列（備考） |
 |-------------------|--------------|-------------------|--------------------------|----------------|----------------|-----------|
-| `map_001` | `DOAJ` | `OPF` | `listed_in_doaj` | `yes→TRUE, no→FALSE` | `TRUE` | |
-| `map_002` | `Journal_URL` | `OPF` | `url` | なし | `TRUE` | |
-| `map_003` | `Policy_URL` | `OPF` | `publisher_policy[].urls[type=policy].url` | 最初のpolicyタイプを使用 | `TRUE` | |
-| `map_004` | `Published_CopyrightOwner` | `OPF` | `publisher_policy[].permitted_oa[version=published].copyright_owner` | article_version=publishedで絞込 | `TRUE` | |
-| `map_005` | `Published_Licence` | `OPF` | `publisher_policy[].permitted_oa[version=published].license[0].license` | article_version=publishedで絞込 | `TRUE` | |
-| `map_006` | `Published_Archivability` | `OPF` | `publisher_policy[].open_access_prohibited` | `yes→不可, no→可` | `TRUE` | |
-| `map_007` | `Published_Location_IR` | `OPF` | `publisher_policy[].permitted_oa[version=published].location.location` | `institutional_repository`含む場合TRUE | `TRUE` | |
-| `map_008` | `Published_Location_Author` | `OPF` | `publisher_policy[].permitted_oa[version=published].location.location` | `authors_homepage`含む場合TRUE | `TRUE` | |
-| `map_009` | `Accepted_CopyrightOwner` | `OPF` | `publisher_policy[].permitted_oa[version=accepted].copyright_owner` | article_version=acceptedで絞込 | `TRUE` | |
-| `map_010` | `Accepted_Licence` | `OPF` | `publisher_policy[].permitted_oa[version=accepted].license[0].license` | article_version=acceptedで絞込 | `TRUE` | |
-| `map_011` | `Accepted_Archivability` | `OPF` | `publisher_policy[].open_access_prohibited` | `yes→不可, no→可` | `TRUE` | |
-| `map_012` | `Accepted_Location_IR` | `OPF` | `publisher_policy[].permitted_oa[version=accepted].location.location` | `institutional_repository`含む場合TRUE | `TRUE` | |
-| `map_013` | `Accepted_Location_Author` | `OPF` | `publisher_policy[].permitted_oa[version=accepted].location.location` | `authors_homepage`含む場合TRUE | `TRUE` | |
-| `map_014` | `Submitted_Archivability` | `OPF` | `publisher_policy[].open_access_prohibited` | `yes→不可, no→可` | `TRUE` | |
-| `map_015` | `Submitted_Location_IR` | `OPF` | `publisher_policy[].permitted_oa[version=submitted].location.location` | `institutional_repository`含む場合TRUE | `TRUE` | |
 | `map_016` | `OAType` | `JSTAGE` | `oa_type` | **仮フィールド名** | `FALSE` | J-STAGE実装後に有効化・フィールド名修正要 |
 | `map_017` | `Published_Location_IR` | `JSTAGE` | `ir_available` | **仮フィールド名** | `FALSE` | J-STAGE実装後に有効化・フィールド名修正要 |
 | `map_018` | `Policy_URL` | `JSTAGE` | `policy_url` | **仮フィールド名** | `FALSE` | J-STAGE実装後に有効化・フィールド名修正要 |
@@ -430,23 +415,6 @@ async function getMapping(auth, configSheetId) {
 ### 設計方針
 
 Open Policy Finder（OPF）APIのエンドポイント構成に準拠する。SCPJの全55列を公開する。GitHub Pagesで静的JSONファイルを配信し、GitHub Actionsのバッチ後に自動更新する。
-
-### OPF APIへのリクエスト仕様
-
-ISSNを使ってOPFからジャーナル情報を取得する際は`/retrieve`エンドポイントを使用する。
-
-```javascript
-async function fetchOPFByISSN(baseUrl, issn) {
-  // ISSNのハイフンを正規化（ハイフンあり形式に統一）
-  const normalized = issn.replace(/[^0-9Xx]/g, '').replace(/(.{4})(.{4})/, '$1-$2');
-  const url = `${baseUrl}?issn=${encodeURIComponent(normalized)}`;
-  const res = await fetchWithRetry(url);
-  if (!res.ok) return null;
-  const data = await res.json();
-  // items配列の最初の1件を使用。publisher_policyが複数ある場合も[0]を使用する
-  return data.items?.[0] ?? null;
-}
-```
 
 ### エンドポイント一覧
 
@@ -580,7 +548,7 @@ GET /object_ids
 
 ```
 1. 変数管理SSから設定読み込み（LAST_BATCH_RUN等）
-2. OPF / J-STAGE APIから前回実行以降に更新された雑誌情報を取得
+2. J-STAGE APIから前回実行以降に更新された雑誌情報を取得
    ├── 初回（LAST_BATCH_RUN が空）：全件取得
    └── 2回目以降：LAST_BATCH_RUN以降に更新された雑誌のみ取得
 3. SCPJのISSN一覧と照合（マッチングキーはMATCH_KEY_SCPJで設定）
@@ -617,7 +585,7 @@ function hasDifference(scpjValue, sourceValue) {
 ### 差異レポートの形式
 
 ```
-件名：[SCPJ] J-STAGE連携バッチ 差異レポート - YYYY-MM-DD
+件名：[SCPJ] バッチ 差異レポート - YYYY-MM-DD
 
 バッチ実行日時：YYYY-MM-DD HH:MM:SS
 処理対象件数：XXX件（うち補完実施：XX件）
@@ -675,9 +643,9 @@ async function fetchJstageData(issn, since) {
 
 ## 実装上の注意事項
 
-### OPFフィールドパスの動的解決（`resolveFieldPath`）
+### ソースフィールドパスの動的解決（`resolveFieldPath`）
 
-マッピングシートのD列に記載したパス文字列を実行時に解釈してOPFレスポンスからフィールド値を取得する。以下の記法を`utils/mapping.js`に実装すること。
+マッピングシートのD列に記載したパス文字列を実行時に解釈してJ-STAGE等のレスポンスからフィールド値を取得する。以下の記法を`utils/mapping.js`に実装すること。
 
 **対応する記法：**
 
