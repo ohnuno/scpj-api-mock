@@ -46,6 +46,12 @@ async function main() {
   let processedCount = 0;
   let complementedCount = 0;
 
+  // 有効な JSTAGE マッピングがある場合のみ J-STAGE API を呼び出す
+  const hasJstageMappings = mappings.some(m => m.source === 'JSTAGE');
+  if (!hasJstageMappings) {
+    console.log('有効な JSTAGE マッピングなし → J-STAGE API 呼び出しをスキップ');
+  }
+
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
 
@@ -63,12 +69,14 @@ async function main() {
     processedCount++;
     const rowNumber = i + 2; // ヘッダー行が1行目なのでデータは2行目〜
 
-    // J-STAGE データ取得
+    // J-STAGE データ取得（有効な JSTAGE マッピングがある場合のみ）
     let jstageData = null;
-    try {
-      jstageData = await fetchJstageData(issn, lastBatchRun, cfg);
-    } catch (e) {
-      console.warn(`J-STAGE fetch 失敗 (ISSN: ${issn}): ${e.message}`);
+    if (hasJstageMappings) {
+      try {
+        jstageData = await fetchJstageData(issn, lastBatchRun, cfg);
+      } catch (e) {
+        console.warn(`J-STAGE fetch 失敗 (ISSN: ${issn}): ${e.message}`);
+      }
     }
 
     const sourceData = {
