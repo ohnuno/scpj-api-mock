@@ -120,7 +120,15 @@ async function main() {
     console.log('補完対象なし');
   }
 
-  // 差異レポート送信（テストモードでは送信スキップ）
+  // 差異レポート：件数にかかわらず常にログ出力
+  if (allDiffs.length > 0) {
+    console.log(`差異検出: ${allDiffs.length} 件`);
+    console.log(allDiffs.map(d => `  ${d.journalId} / ${d.field}: "${d.scpjValue}" → "${d.sourceValue}" [${d.source}]`).join('\n'));
+  } else {
+    console.log('差異なし');
+  }
+
+  // 差異レポートメール送信（本番モード + SENDGRID_API_KEY 設定時のみ）
   if (allDiffs.length > 0 && !useTestMode && SENDGRID_API_KEY) {
     const { subject, body } = buildDiffReport({
       runAt,
@@ -135,12 +143,9 @@ async function main() {
       subject,
       body
     );
-    console.log(`差異レポート送信完了 (${allDiffs.length} 件)`);
+    console.log(`差異レポートメール送信完了`);
   } else if (allDiffs.length > 0 && useTestMode) {
-    console.log(`[テストモード] 差異レポート送信スキップ (${allDiffs.length} 件の差異を検出)`);
-    console.log(allDiffs.map(d => `  ${d.journalId} / ${d.field}: "${d.scpjValue}" ≠ "${d.sourceValue}"`).join('\n'));
-  } else {
-    console.log('差異なし');
+    console.log(`[テストモード] 差異レポートメール送信スキップ`);
   }
 
   // LAST_BATCH_RUN を更新（正常完了時のみ）
