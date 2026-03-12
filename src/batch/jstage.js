@@ -25,6 +25,8 @@
  *   publisher.name.ja     : 発行者名（日本語）
  *   publisher.url.ja      : 発行者URL
  *   cdjournal             : J-STAGE ジャーナルコード（例: hpi1972）
+ *   prism:issn            : Print ISSN
+ *   prism:eIssn           : Electronic ISSN
  *
  * OAフィールドは現在未追加（J-STAGEが追加予定・フィールド名未定）。
  * OA項目名確定後、以下の手順で対応:
@@ -72,6 +74,8 @@ async function fetchJstageData(issn, since, cfg) {
         },
       },
       cdjournal: first?.cdjournal ?? '',
+      'prism:issn': first?.['prism:issn'] || null,
+      'prism:eIssn': first?.['prism:eIssn'] || null,
     };
   } catch {
     return null;
