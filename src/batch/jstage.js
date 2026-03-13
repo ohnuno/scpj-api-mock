@@ -74,8 +74,8 @@ async function fetchJstageData(issn, since, cfg) {
         },
       },
       cdjournal: first?.cdjournal ?? '',
-      'prism:issn': first?.['prism:issn'] || null,
-      'prism:eIssn': first?.['prism:eIssn'] || null,
+      'prism:issn': first?.['prism:issn'] ? first['prism:issn'].replace(/-/g, '') : null,
+      'prism:eIssn': first?.['prism:eIssn'] ? first['prism:eIssn'].replace(/-/g, '') : null,
     };
   } catch {
     return null;
