@@ -1,60 +1,110 @@
 {
-  "sheet_updated_at": "",
   "journal_id": "J000568",
-  "journal_title": "生活指導研究",
-  "journal_title_alias": "",
-  "journal_title_en": "",
-  "journal_url": "",
-  "issn_l": "09103651",
-  "pissn": "0910-3651",
-  "eissn": "2758-9609",
-  "doaj": "",
-  "oa_type": "",
-  "oa_type_notes": "",
+  "titles": [
+    {
+      "title": "生活指導研究",
+      "language": "ja"
+    }
+  ],
+  "journal_title_alias": null,
+  "journal_url": null,
+  "issns": [
+    {
+      "type": "linking",
+      "issn": "09103651"
+    },
+    {
+      "type": "print",
+      "issn": "0910-3651"
+    },
+    {
+      "type": "electronic",
+      "issn": "2758-9609"
+    }
+  ],
+  "listed_in_doaj": null,
+  "oa_type": null,
+  "oa_type_notes": null,
+  "non_embargo_oa": null,
+  "applicability": null,
+  "society": {
+    "id": "S000470",
+    "name": "日本生活指導学会",
+    "name_en": null,
+    "url": "http://jasg.m47.coreserver.jp/main/",
+    "contact_url": null,
+    "meikan_url": "https://gakkai.scj.go.jp/organizations/G01078"
+  },
+  "publisher_policy": [
+    {
+      "article_version": "published",
+      "copyright_owner": null,
+      "licence": null,
+      "archivability": null,
+      "location": {
+        "ir": null,
+        "author": null,
+        "funder": null,
+        "non_commercial": null,
+        "others": null
+      },
+      "embargo": {
+        "general_months": null,
+        "funded_months": null
+      },
+      "terms": {
+        "copyright": null,
+        "by": null,
+        "link": null,
+        "notes": null
+      }
+    },
+    {
+      "article_version": "accepted",
+      "copyright_owner": null,
+      "licence": null,
+      "archivability": null,
+      "location": {
+        "ir": null,
+        "author": null,
+        "funder": null,
+        "non_commercial": null,
+        "others": null
+      },
+      "embargo": {
+        "general_months": null,
+        "funded_months": null
+      },
+      "terms": {
+        "copyright": null,
+        "by": null,
+        "link": null,
+        "notes": null
+      }
+    },
+    {
+      "article_version": "submitted",
+      "copyright_owner": null,
+      "licence": null,
+      "archivability": null,
+      "location": {
+        "ir": null,
+        "author": null,
+        "funder": null,
+        "non_commercial": null,
+        "others": null
+      },
+      "embargo": null,
+      "terms": {
+        "copyright": null,
+        "by": null,
+        "link": null,
+        "notes": null
+      }
+    }
+  ],
   "policy_url": "http://jasg.m47.coreserver.jp/main/2016/12/07/%e3%80%8e%e7%94%9f%e6%b4%bb%e6%8c%87%e5%b0%8e%e7%a0%94%e7%a9%b6%e3%80%8f%e7%b7%a8%e9%9b%86%e8%a6%8f%e5%ae%9a/",
-  "non_embargo_oa": "",
-  "society_id": "S000470",
-  "society_name": "日本生活指導学会",
-  "society_name_en": "",
-  "society_url": "http://jasg.m47.coreserver.jp/main/",
-  "society_contact_url": "",
-  "meikan_url": "https://gakkai.scj.go.jp/organizations/G01078",
-  "published_copyright_owner": "",
-  "published_licence": "",
-  "published_archivability": "",
-  "published_location_ir": "",
-  "published_location_author": "",
-  "published_location_funder": "",
-  "published_location_non_commercial": "",
-  "published_location_others": "",
-  "published_embargo_general_months": "",
-  "published_embargo_funded_months": "",
-  "published_terms_copyright": "",
-  "published_terms_by": "",
-  "published_terms_link": "",
-  "published_terms_notes": "",
-  "accepted_copyright_owner": "",
-  "accepted_licence": "",
-  "accepted_archivability": "",
-  "accepted_location_ir": "",
-  "accepted_location_author": "",
-  "accepted_location_funder": "",
-  "accepted_location_non_commercial": "",
-  "accepted_location_others": "",
-  "accepted_embargo_general_months": "",
-  "accepted_embargo_funded_months": "",
-  "accepted_terms_copyright": "",
-  "accepted_terms_by": "",
-  "accepted_terms_link": "",
-  "accepted_terms_notes": "",
-  "submitted_archivability": "",
-  "submitted_location_ir": "",
-  "submitted_location_author": "",
-  "submitted_location_funder": "",
-  "submitted_location_non_commercial": "",
-  "submitted_location_others": "",
-  "submitted_terms_notes": "",
-  "applicability": "",
   "cdjournal": "jasg",
-  "updated_at": "2021/03/18"
+  "updated_at": "2021/03/18",
+  "sheet_updated_at": null
 }

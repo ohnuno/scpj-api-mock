@@ -1,64 +1,114 @@
 {
   "items": [
     {
-      "sheet_updated_at": "",
       "journal_id": "J000663",
-      "journal_title": "岩石鉱物科学",
-      "journal_title_alias": "",
-      "journal_title_en": "Japanese Magazine of Mineralogical and Petrological Sciences",
+      "titles": [
+        {
+          "title": "岩石鉱物科学",
+          "language": "ja"
+        },
+        {
+          "title": "Japanese Magazine of Mineralogical and Petrological Sciences",
+          "language": "en"
+        }
+      ],
+      "journal_title_alias": null,
       "journal_url": "https://www.jstage.jst.go.jp/browse/gkk/-char/ja",
-      "issn_l": "",
-      "pissn": "1345630X",
-      "eissn": "13497979",
-      "doaj": "",
+      "issns": [
+        {
+          "type": "print",
+          "issn": "1345630X"
+        },
+        {
+          "type": "electronic",
+          "issn": "13497979"
+        }
+      ],
+      "listed_in_doaj": null,
       "oa_type": "フルOAモデル",
-      "oa_type_notes": "",
-      "policy_url": "https://jams-mineral.jp/journal/gkk/%e8%bb%a2%e8%bc%89%e8%a8%b1%e5%8f%af%e7%94%b3%e8%ab%8b/",
+      "oa_type_notes": null,
       "non_embargo_oa": "出版後即時OA可",
-      "society_id": "S000553",
-      "society_name": "一般社団法人日本鉱物科学会",
-      "society_name_en": "Japan Association of Mineralogical Sciences",
-      "society_url": "https://jams-mineral.jp/",
-      "society_contact_url": "",
-      "meikan_url": "https://gakkai.scj.go.jp/organizations/G01827",
-      "published_copyright_owner": "学会/出版社",
-      "published_licence": "CC BY-NC-ND",
-      "published_archivability": "OK",
-      "published_location_ir": "OK",
-      "published_location_author": "OK",
-      "published_location_funder": "OK",
-      "published_location_non_commercial": "不可",
-      "published_location_others": "",
-      "published_embargo_general_months": "0",
-      "published_embargo_funded_months": "",
-      "published_terms_copyright": "必要",
-      "published_terms_by": "必要",
-      "published_terms_link": "必要",
-      "published_terms_notes": "",
-      "accepted_copyright_owner": "学会/出版社",
-      "accepted_licence": "CC BY-NC-ND",
-      "accepted_archivability": "OK",
-      "accepted_location_ir": "OK",
-      "accepted_location_author": "OK",
-      "accepted_location_funder": "OK",
-      "accepted_location_non_commercial": "不可",
-      "accepted_location_others": "",
-      "accepted_embargo_general_months": "0",
-      "accepted_embargo_funded_months": "",
-      "accepted_terms_copyright": "必要",
-      "accepted_terms_by": "必要",
-      "accepted_terms_link": "必要",
-      "accepted_terms_notes": "",
-      "submitted_archivability": "不可",
-      "submitted_location_ir": "",
-      "submitted_location_author": "",
-      "submitted_location_funder": "",
-      "submitted_location_non_commercial": "",
-      "submitted_location_others": "",
-      "submitted_terms_notes": "",
       "applicability": "OK",
+      "society": {
+        "id": "S000553",
+        "name": "一般社団法人日本鉱物科学会",
+        "name_en": "Japan Association of Mineralogical Sciences",
+        "url": "https://jams-mineral.jp/",
+        "contact_url": null,
+        "meikan_url": "https://gakkai.scj.go.jp/organizations/G01827"
+      },
+      "publisher_policy": [
+        {
+          "article_version": "published",
+          "copyright_owner": "学会/出版社",
+          "licence": "CC BY-NC-ND",
+          "archivability": "OK",
+          "location": {
+            "ir": "OK",
+            "author": "OK",
+            "funder": "OK",
+            "non_commercial": "不可",
+            "others": null
+          },
+          "embargo": {
+            "general_months": "0",
+            "funded_months": null
+          },
+          "terms": {
+            "copyright": "必要",
+            "by": "必要",
+            "link": "必要",
+            "notes": null
+          }
+        },
+        {
+          "article_version": "accepted",
+          "copyright_owner": "学会/出版社",
+          "licence": "CC BY-NC-ND",
+          "archivability": "OK",
+          "location": {
+            "ir": "OK",
+            "author": "OK",
+            "funder": "OK",
+            "non_commercial": "不可",
+            "others": null
+          },
+          "embargo": {
+            "general_months": "0",
+            "funded_months": null
+          },
+          "terms": {
+            "copyright": "必要",
+            "by": "必要",
+            "link": "必要",
+            "notes": null
+          }
+        },
+        {
+          "article_version": "submitted",
+          "copyright_owner": null,
+          "licence": null,
+          "archivability": "不可",
+          "location": {
+            "ir": null,
+            "author": null,
+            "funder": null,
+            "non_commercial": null,
+            "others": null
+          },
+          "embargo": null,
+          "terms": {
+            "copyright": null,
+            "by": null,
+            "link": null,
+            "notes": null
+          }
+        }
+      ],
+      "policy_url": "https://jams-mineral.jp/journal/gkk/%e8%bb%a2%e8%bc%89%e8%a8%b1%e5%8f%af%e7%94%b3%e8%ab%8b/",
       "cdjournal": "gkk",
-      "updated_at": "2025/09/10"
+      "updated_at": "2025/09/10",
+      "sheet_updated_at": null
     }
   ]
 }

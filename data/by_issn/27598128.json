@@ -1,64 +1,114 @@
 {
   "items": [
     {
-      "sheet_updated_at": "",
       "journal_id": "J000740",
-      "journal_title": "診断病理",
-      "journal_title_alias": "",
-      "journal_title_en": "Japanese Journal of Diagnostic Pathology",
-      "journal_url": "",
-      "issn_l": "",
-      "pissn": "13456431",
-      "eissn": "27598128",
-      "doaj": "",
+      "titles": [
+        {
+          "title": "診断病理",
+          "language": "ja"
+        },
+        {
+          "title": "Japanese Journal of Diagnostic Pathology",
+          "language": "en"
+        }
+      ],
+      "journal_title_alias": null,
+      "journal_url": null,
+      "issns": [
+        {
+          "type": "print",
+          "issn": "13456431"
+        },
+        {
+          "type": "electronic",
+          "issn": "27598128"
+        }
+      ],
+      "listed_in_doaj": null,
       "oa_type": "その他（OAタイプ備考参照）",
       "oa_type_notes": "2025年4月刊行のVol.42No.2以降オープンアクセス、それ以前は購読モデル",
-      "policy_url": "https://pathology.or.jp/kankoubutu/jour-jjdp.html",
       "non_embargo_oa": "出版後即時OA可",
-      "society_id": "S000612",
-      "society_name": "日本病理学会",
-      "society_name_en": "The Japanese Society of Pathology",
-      "society_url": "https://pathology.or.jp",
-      "society_contact_url": "",
-      "meikan_url": "https://gakkai.scj.go.jp/organizations/G00039",
-      "published_copyright_owner": "学会/出版社",
-      "published_licence": "CC BY-NC-ND",
-      "published_archivability": "OK",
-      "published_location_ir": "OK",
-      "published_location_author": "OK",
-      "published_location_funder": "OK",
-      "published_location_non_commercial": "OK",
-      "published_location_others": "CC BY-NC-NDの範囲内で制限なし",
-      "published_embargo_general_months": "0",
-      "published_embargo_funded_months": "",
-      "published_terms_copyright": "必要",
-      "published_terms_by": "必要",
-      "published_terms_link": "不要",
-      "published_terms_notes": "",
-      "accepted_copyright_owner": "学会/出版社",
-      "accepted_licence": "",
-      "accepted_archivability": "不可",
-      "accepted_location_ir": "",
-      "accepted_location_author": "",
-      "accepted_location_funder": "",
-      "accepted_location_non_commercial": "",
-      "accepted_location_others": "",
-      "accepted_embargo_general_months": "",
-      "accepted_embargo_funded_months": "",
-      "accepted_terms_copyright": "",
-      "accepted_terms_by": "",
-      "accepted_terms_link": "",
-      "accepted_terms_notes": "",
-      "submitted_archivability": "不可",
-      "submitted_location_ir": "",
-      "submitted_location_author": "",
-      "submitted_location_funder": "",
-      "submitted_location_non_commercial": "",
-      "submitted_location_others": "",
-      "submitted_terms_notes": "",
       "applicability": "不可",
+      "society": {
+        "id": "S000612",
+        "name": "日本病理学会",
+        "name_en": "The Japanese Society of Pathology",
+        "url": "https://pathology.or.jp",
+        "contact_url": null,
+        "meikan_url": "https://gakkai.scj.go.jp/organizations/G00039"
+      },
+      "publisher_policy": [
+        {
+          "article_version": "published",
+          "copyright_owner": "学会/出版社",
+          "licence": "CC BY-NC-ND",
+          "archivability": "OK",
+          "location": {
+            "ir": "OK",
+            "author": "OK",
+            "funder": "OK",
+            "non_commercial": "OK",
+            "others": "CC BY-NC-NDの範囲内で制限なし"
+          },
+          "embargo": {
+            "general_months": "0",
+            "funded_months": null
+          },
+          "terms": {
+            "copyright": "必要",
+            "by": "必要",
+            "link": "不要",
+            "notes": null
+          }
+        },
+        {
+          "article_version": "accepted",
+          "copyright_owner": "学会/出版社",
+          "licence": null,
+          "archivability": "不可",
+          "location": {
+            "ir": null,
+            "author": null,
+            "funder": null,
+            "non_commercial": null,
+            "others": null
+          },
+          "embargo": {
+            "general_months": null,
+            "funded_months": null
+          },
+          "terms": {
+            "copyright": null,
+            "by": null,
+            "link": null,
+            "notes": null
+          }
+        },
+        {
+          "article_version": "submitted",
+          "copyright_owner": null,
+          "licence": null,
+          "archivability": "不可",
+          "location": {
+            "ir": null,
+            "author": null,
+            "funder": null,
+            "non_commercial": null,
+            "others": null
+          },
+          "embargo": null,
+          "terms": {
+            "copyright": null,
+            "by": null,
+            "link": null,
+            "notes": null
+          }
+        }
+      ],
+      "policy_url": "https://pathology.or.jp/kankoubutu/jour-jjdp.html",
       "cdjournal": "jspjjdp",
-      "updated_at": "2025/09/25"
+      "updated_at": "2025/09/25",
+      "sheet_updated_at": null
     }
   ]
 }
