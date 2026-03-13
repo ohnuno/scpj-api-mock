@@ -83,8 +83,8 @@ async function generate() {
   fs.mkdirSync(byIssnDir, { recursive: true });
   const issnMap = new Map();
   for (const item of items) {
-    for (const issnField of ['issn_l', 'pissn', 'eissn']) {
-      const raw = item[issnField];
+    for (const issnObj of (item.issns || [])) {
+      const raw = issnObj.issn;
       if (!raw) continue;
       const normalized = normalizeISSN(raw);
       if (!normalized || normalized.length < 8) continue;

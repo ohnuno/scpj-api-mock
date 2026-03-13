@@ -1,8 +1,7 @@
 'use strict';
 
 /**
- * SCPJ列名 → API レスポンスキー名 のマッピング表
- * implementation_handoff.md の「フィールド名マッピング」セクションに基づく
+ * SCPJ列名 → フラットAPIキー名 のマッピング表（バッチ処理・内部変換用）
  */
 const COLUMN_TO_API_KEY = {
   '最終更新日': 'sheet_updated_at',
@@ -66,19 +65,132 @@ const COLUMN_TO_API_KEY = {
 };
 
 /**
- * SCPJ の行データ（ヘッダー配列 + 値配列）をAPIキー名のオブジェクトに変換する
+ * SCPJ の行データ（ヘッダー配列 + 値配列）を構造化 API オブジェクトに変換する
  * @param {string[]} headers - SCPJ のヘッダー行
  * @param {string[]} row - SCPJ のデータ行
- * @returns {object} APIキー名をキーとしたオブジェクト
+ * @returns {object} 構造化された API オブジェクト
  */
 function rowToApiObject(headers, row) {
-  const obj = {};
+  // まずフラットオブジェクトに変換
+  const flat = {};
   for (let i = 0; i < headers.length; i++) {
     const col = headers[i];
     const apiKey = COLUMN_TO_API_KEY[col] ?? toSnakeCase(col);
-    obj[apiKey] = row[i] ?? '';
+    flat[apiKey] = row[i] ?? '';
   }
-  return obj;
+
+  // 空文字を null に変換するヘルパー
+  const v = str => (str === '' || str == null) ? null : str;
+
+  // titles[]
+  const titles = [];
+  if (flat.journal_title) titles.push({ title: flat.journal_title, language: 'ja' });
+  if (flat.journal_title_en) titles.push({ title: flat.journal_title_en, language: 'en' });
+
+  // issns[]
+  const issns = [];
+  if (flat.issn_l)  issns.push({ type: 'linking',    issn: flat.issn_l });
+  if (flat.pissn)   issns.push({ type: 'print',       issn: flat.pissn });
+  if (flat.eissn)   issns.push({ type: 'electronic',  issn: flat.eissn });
+
+  // society{}
+  const society = {
+    id:          v(flat.society_id),
+    name:        v(flat.society_name),
+    name_en:     v(flat.society_name_en),
+    url:         v(flat.society_url),
+    contact_url: v(flat.society_contact_url),
+    meikan_url:  v(flat.meikan_url),
+  };
+
+  // publisher_policy[]
+  const publisher_policy = [
+    {
+      article_version: 'published',
+      copyright_owner: v(flat.published_copyright_owner),
+      licence:         v(flat.published_licence),
+      archivability:   v(flat.published_archivability),
+      location: {
+        ir:             v(flat.published_location_ir),
+        author:         v(flat.published_location_author),
+        funder:         v(flat.published_location_funder),
+        non_commercial: v(flat.published_location_non_commercial),
+        others:         v(flat.published_location_others),
+      },
+      embargo: {
+        general_months: v(flat.published_embargo_general_months),
+        funded_months:  v(flat.published_embargo_funded_months),
+      },
+      terms: {
+        copyright: v(flat.published_terms_copyright),
+        by:        v(flat.published_terms_by),
+        link:      v(flat.published_terms_link),
+        notes:     v(flat.published_terms_notes),
+      },
+    },
+    {
+      article_version: 'accepted',
+      copyright_owner: v(flat.accepted_copyright_owner),
+      licence:         v(flat.accepted_licence),
+      archivability:   v(flat.accepted_archivability),
+      location: {
+        ir:             v(flat.accepted_location_ir),
+        author:         v(flat.accepted_location_author),
+        funder:         v(flat.accepted_location_funder),
+        non_commercial: v(flat.accepted_location_non_commercial),
+        others:         v(flat.accepted_location_others),
+      },
+      embargo: {
+        general_months: v(flat.accepted_embargo_general_months),
+        funded_months:  v(flat.accepted_embargo_funded_months),
+      },
+      terms: {
+        copyright: v(flat.accepted_terms_copyright),
+        by:        v(flat.accepted_terms_by),
+        link:      v(flat.accepted_terms_link),
+        notes:     v(flat.accepted_terms_notes),
+      },
+    },
+    {
+      article_version: 'submitted',
+      copyright_owner: null,
+      licence:         null,
+      archivability:   v(flat.submitted_archivability),
+      location: {
+        ir:             v(flat.submitted_location_ir),
+        author:         v(flat.submitted_location_author),
+        funder:         v(flat.submitted_location_funder),
+        non_commercial: v(flat.submitted_location_non_commercial),
+        others:         v(flat.submitted_location_others),
+      },
+      embargo: null,
+      terms: {
+        copyright: null,
+        by:        null,
+        link:      null,
+        notes:     v(flat.submitted_terms_notes),
+      },
+    },
+  ];
+
+  return {
+    journal_id:         v(flat.journal_id),
+    titles,
+    journal_title_alias: v(flat.journal_title_alias),
+    journal_url:        v(flat.journal_url),
+    issns,
+    listed_in_doaj:     v(flat.doaj),
+    oa_type:            v(flat.oa_type),
+    oa_type_notes:      v(flat.oa_type_notes),
+    non_embargo_oa:     v(flat.non_embargo_oa),
+    applicability:      v(flat.applicability),
+    society,
+    publisher_policy,
+    policy_url:         v(flat.policy_url),
+    cdjournal:          v(flat.cdjournal),
+    updated_at:         v(flat.updated_at),
+    sheet_updated_at:   v(flat.sheet_updated_at),
+  };
 }
 
 /**
