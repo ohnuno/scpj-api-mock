@@ -10,7 +10,7 @@ function normalizeForComparison(str) {
   return str
     .toString()
     .replace(/[・･、。，．]/g, '')
-    .replace(/[,.\-_/\\|]/g, '')
+    .replace(/[,._/\\|]/g, '')
     .replace(/[　\s]+/g, ' ')
     .trim()
     .toLowerCase();

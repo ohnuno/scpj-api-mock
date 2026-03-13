@@ -56,7 +56,8 @@ async function readScpjSheet(auth, sheetId, sheetName) {
 }
 
 /**
- * シートの既存データの末尾に複数行を追記する
+ * シートの入力済範囲の直後に複数行を追記する
+ * A列の行数を読み取って次行を特定し、そこに書き込む（フォーム回答シートで安全）
  * @param {object} auth
  * @param {string} spreadsheetId
  * @param {string} sheetName
@@ -65,11 +66,17 @@ async function readScpjSheet(auth, sheetId, sheetName) {
 async function sheetsAppendRows(auth, spreadsheetId, sheetName, rows) {
   if (rows.length === 0) return;
   const sheets = google.sheets({ version: 'v4', auth });
-  await sheets.spreadsheets.values.append({
+  // A列の実データ行数を取得して次行を特定
+  const colA = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `${sheetName}!A1`,
+    range: `${sheetName}!A:A`,
+  });
+  const lastRow = (colA.data.values || []).length;
+  const nextRow = lastRow + 1;
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: `${sheetName}!A${nextRow}`,
     valueInputOption: 'RAW',
-    insertDataOption: 'INSERT_ROWS',
     requestBody: { values: rows },
   });
 }
