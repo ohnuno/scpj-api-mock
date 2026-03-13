@@ -1,0 +1,110 @@
+{
+  "items": [
+    {
+      "journal_id": "J000533",
+      "titles": [
+        {
+          "title": "中国文化",
+          "language": "ja"
+        },
+        {
+          "title": "The Chinese Culture",
+          "language": "en"
+        }
+      ],
+      "journal_title_alias": null,
+      "journal_url": "https://tsukuba.repo.nii.ac.jp/search?search_type=2&q=6210",
+      "issns": [
+        {
+          "type": "linking",
+          "issn": "02896648"
+        }
+      ],
+      "listed_in_doaj": null,
+      "oa_type": "購読モデル",
+      "oa_type_notes": null,
+      "non_embargo_oa": "出版後即時OA可",
+      "applicability": null,
+      "society": {
+        "id": "S000439",
+        "name": "中国文化学会",
+        "name_en": null,
+        "url": "https://zhongguowenhuaxuehui.org/",
+        "contact_url": "https://zhongguowenhuaxuehui.org/?page_id=200",
+        "meikan_url": "https://gakkai.scj.go.jp/organizations/G00115"
+      },
+      "publisher_policy": [
+        {
+          "article_version": "published",
+          "copyright_owner": "学会/出版社",
+          "licence": null,
+          "archivability": "OK",
+          "location": {
+            "ir": "OK",
+            "author": "OK",
+            "funder": "OK",
+            "non_commercial": "OK",
+            "others": null
+          },
+          "embargo": {
+            "general_months": "12",
+            "funded_months": null
+          },
+          "terms": {
+            "copyright": null,
+            "by": null,
+            "link": null,
+            "notes": null
+          }
+        },
+        {
+          "article_version": "accepted",
+          "copyright_owner": null,
+          "licence": null,
+          "archivability": null,
+          "location": {
+            "ir": null,
+            "author": null,
+            "funder": null,
+            "non_commercial": null,
+            "others": null
+          },
+          "embargo": {
+            "general_months": null,
+            "funded_months": null
+          },
+          "terms": {
+            "copyright": null,
+            "by": null,
+            "link": null,
+            "notes": null
+          }
+        },
+        {
+          "article_version": "submitted",
+          "copyright_owner": null,
+          "licence": null,
+          "archivability": null,
+          "location": {
+            "ir": null,
+            "author": null,
+            "funder": null,
+            "non_commercial": null,
+            "others": null
+          },
+          "embargo": null,
+          "terms": {
+            "copyright": null,
+            "by": null,
+            "link": null,
+            "notes": null
+          }
+        }
+      ],
+      "policy_url": "https://zhongguowenhuaxuehui.org/?page_id=108",
+      "cdjournal": null,
+      "updated_at": null,
+      "sheet_updated_at": null
+    }
+  ]
+}
