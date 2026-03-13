@@ -39,11 +39,12 @@ function hasDifference(scpjValue, sourceValue) {
  * @param {Array} params.mappings - getMapping() の戻り値（有効フラグ=TRUE のみ）
  * @param {Function} params.resolveFieldPath - mapping.js の resolveFieldPath
  * @param {Function} params.applyTransform - mapping.js の applyTransform
- * @returns {{updates: Array, diffs: Array}} 補完更新リストと差異リスト
+ * @returns {{updates: Array, diffs: Array, complements: Array}} 補完更新リストと差異リスト
  */
 function processJournalRow({ headers, row, colIndex, rowNumber, sheetName, sourceData, mappings, resolveFieldPath, applyTransform }) {
   const updates = [];
   const diffs = [];
+  const complements = []; // 空欄補完値（差分チェックモードでのテストシート行構築用）
 
   const journalId = row[colIndex['Journal_ID']] ?? '';
   const journalTitle = row[colIndex['Journal_Title']] ?? '';
@@ -70,6 +71,7 @@ function processJournalRow({ headers, row, colIndex, rowNumber, sheetName, sourc
         range: `${sheetName}!${colLetter}${rowNumber}`,
         values: [[transformedStr]],
       });
+      complements.push({ journalId, journalTitle, field: scpjColumn, sourceValue: transformedStr, source });
     } else if (mapping.overwrite && hasDifference(scpjValue, transformedStr)) {
       // 上書きフラグON かつ差異あり → 上書き書き込み＋差異記録
       updates.push({
@@ -97,7 +99,7 @@ function processJournalRow({ headers, row, colIndex, rowNumber, sheetName, sourc
     }
   }
 
-  return { updates, diffs };
+  return { updates, diffs, complements };
 }
 
 /**

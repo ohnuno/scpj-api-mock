@@ -53,10 +53,11 @@ const SCPJ_TO_TEST_COL = {
  * @param {string[]} headers - SCPJ ヘッダー行
  * @param {string[]} row - SCPJ データ行（元データ）
  * @param {Array} diffs - 差異リスト（{field: scpjColumn, sourceValue}[]）
+ * @param {Array} complements - 空欄補完リスト（{field: scpjColumn, sourceValue}[]）
  * @param {string} runAt - 処理日時（ISO8601）
  * @returns {string[]} テストシート1行分の値配列
  */
-function buildTestSheetRow(headers, row, diffs, runAt) {
+function buildTestSheetRow(headers, row, diffs, complements, runAt) {
   // 本番データをテストシート列名でマップ化
   const valueMap = {};
   for (let i = 0; i < headers.length; i++) {
@@ -64,7 +65,12 @@ function buildTestSheetRow(headers, row, diffs, runAt) {
     const testCol = SCPJ_TO_TEST_COL[scpjCol] || scpjCol;
     valueMap[testCol] = row[i] ?? '';
   }
-  // J-STAGE 差分値で上書き
+  // J-STAGE 補完値（空欄 → 補填）を適用
+  for (const comp of complements) {
+    const testCol = SCPJ_TO_TEST_COL[comp.field] || comp.field;
+    valueMap[testCol] = comp.sourceValue;
+  }
+  // J-STAGE 差分値（既存値 → 上書き）を適用
   for (const diff of diffs) {
     const testCol = SCPJ_TO_TEST_COL[diff.field] || diff.field;
     valueMap[testCol] = diff.sourceValue;
@@ -163,7 +169,7 @@ async function main() {
 
     const sourceData = { JSTAGE: jstageData };
 
-    const { updates, diffs } = processJournalRow({
+    const { updates, diffs, complements } = processJournalRow({
       headers,
       row,
       colIndex,
@@ -182,9 +188,9 @@ async function main() {
         allUpdates.push(...updates);
       }
     } else {
-      // 差分チェックモード: 差分がある行のみテストシート追記用に構築
-      if (diffs.length > 0) {
-        testSheetRows.push(buildTestSheetRow(headers, row, diffs, runAt));
+      // 差分チェックモード: 差分または補完がある行をテストシート追記用に構築
+      if (diffs.length > 0 || complements.length > 0) {
+        testSheetRows.push(buildTestSheetRow(headers, row, diffs, complements, runAt));
       }
     }
     allDiffs.push(...diffs);

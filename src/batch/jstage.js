@@ -57,8 +57,12 @@ async function fetchJstageData(issn, since, cfg) {
     if (status !== '0') return null;
     const entry = parsed?.feed?.entry;
     if (!entry) return null;
-    // 巻号一覧取得なので entry が配列になる場合がある。最初のエントリで誌レベル情報を取得
-    const first = Array.isArray(entry) ? entry[0] : entry;
+    // 巻号一覧取得なので entry が配列になる場合がある
+    const entries = Array.isArray(entry) ? entry : [entry];
+    const first = entries[0];
+    // prism:issn / prism:eIssn は最新号にない場合があるため全エントリを走査して最初に見つかった値を使用
+    const issnEntry = entries.find(e => e?.['prism:issn']) || first;
+    const eissnEntry = entries.find(e => e?.['prism:eIssn']) || first;
     return {
       material_title: {
         en: first?.material_title?.en ?? '',
@@ -74,8 +78,8 @@ async function fetchJstageData(issn, since, cfg) {
         },
       },
       cdjournal: first?.cdjournal ?? '',
-      'prism:issn': first?.['prism:issn'] ? first['prism:issn'].replace(/-/g, '') : null,
-      'prism:eIssn': first?.['prism:eIssn'] ? first['prism:eIssn'].replace(/-/g, '') : null,
+      'prism:issn': issnEntry?.['prism:issn'] ? issnEntry['prism:issn'].replace(/-/g, '') : null,
+      'prism:eIssn': eissnEntry?.['prism:eIssn'] ? eissnEntry['prism:eIssn'].replace(/-/g, '') : null,
     };
   } catch {
     return null;
