@@ -55,4 +55,23 @@ async function readScpjSheet(auth, sheetId, sheetName) {
   return { headers, rows, colIndex };
 }
 
-module.exports = { sheetsGet, sheetsBatchUpdate, readScpjSheet };
+/**
+ * シートの既存データの末尾に複数行を追記する
+ * @param {object} auth
+ * @param {string} spreadsheetId
+ * @param {string} sheetName
+ * @param {string[][]} rows - 追記する行データ
+ */
+async function sheetsAppendRows(auth, spreadsheetId, sheetName, rows) {
+  if (rows.length === 0) return;
+  const sheets = google.sheets({ version: 'v4', auth });
+  await sheets.spreadsheets.values.append({
+    spreadsheetId,
+    range: `${sheetName}!A1`,
+    valueInputOption: 'RAW',
+    insertDataOption: 'INSERT_ROWS',
+    requestBody: { values: rows },
+  });
+}
+
+module.exports = { sheetsGet, sheetsBatchUpdate, readScpjSheet, sheetsAppendRows };
