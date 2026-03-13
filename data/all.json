@@ -624,10 +624,6 @@
       "journal_url": null,
       "issns": [
         {
-          "type": "print",
-          "issn": "10000000"
-        },
-        {
           "type": "electronic",
           "issn": "24242675"
         }
@@ -731,11 +727,11 @@
       "issns": [
         {
           "type": "print",
-          "issn": "09199985"
+          "issn": "10000"
         },
         {
           "type": "electronic",
-          "issn": "2189-8073"
+          "issn": "21898073"
         }
       ],
       "listed_in_doaj": null,
@@ -838,10 +834,6 @@
         {
           "type": "print",
           "issn": "03870154"
-        },
-        {
-          "type": "electronic",
-          "issn": "13479598"
         }
       ],
       "listed_in_doaj": null,

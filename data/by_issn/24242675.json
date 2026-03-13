@@ -12,10 +12,6 @@
       "journal_url": null,
       "issns": [
         {
-          "type": "print",
-          "issn": "10000000"
-        },
-        {
           "type": "electronic",
           "issn": "24242675"
         }
