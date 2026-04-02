@@ -186,14 +186,25 @@ publisher.url.ja    発行者URL
 cdjournal           J-STAGEジャーナルコード（例: hpi1972）
 prism:issn          Print ISSN
 prism:eIssn         Electronic ISSN
+ioa_location_ir_ok  セルフアーカイブ許可時のみ "OK"（不許可・未登録はスキップ）
+ioa_oa_type         OA種別（"その他"/"フルOAモデル"/"ハイブリッドモデル"、対応値なしはスキップ）
+ioa_oa_type_notes   OA種別備考（"フリーアクセス誌"、method=1 以外はスキップ）
 ```
 
-### OAフィールドの有効化手順（将来対応）
+### OAフィールドの有効化手順
 
-J-STAGE OAフィールド名が確定したら:
-1. mappingシート map_016〜019 の D列を実フィールド名に更新
-2. F列を `TRUE` に変更
-3. `src/batch/jstage.js` の返却オブジェクトに当該フィールドを追加
+`src/batch/jstage.js` は以下の OA 派生フィールドを返すよう実装済みです。
+mappingシートに以下の行を追加し F列を `TRUE` にすることで補完が有効になります。
+
+| id | scpjColumn | source | sourcePath | transform | F列 | H列 |
+|---|---|---|---|---|---|---|
+| map_016 | Published_Location_IR | JSTAGE | ioa_location_ir_ok | なし | TRUE | FALSE |
+| map_017 | Accepted_Location_IR | JSTAGE | ioa_location_ir_ok | なし | TRUE | FALSE |
+| map_018 | Submitted_Location_IR | JSTAGE | ioa_location_ir_ok | なし | TRUE | FALSE |
+| map_019 | OAType | JSTAGE | ioa_oa_type | なし | TRUE | FALSE |
+| map_020 | OAType_Notes | JSTAGE | ioa_oa_type_notes | なし | TRUE | FALSE |
+
+> **H列は初期 FALSE（空欄補完のみ）**。J-STAGE 値で既存 SCPJ 値を上書き検出したい場合は後から `TRUE` に変更。
 
 ---
 
@@ -337,6 +348,7 @@ scpj-api/
 
 | 日付 | 変更内容 |
 |---|---|
+| 2026-04-01 | J-STAGE API v2.0対応: service=1切替・OAフィールド補完実装（ioa_location_ir_ok / ioa_oa_type / ioa_oa_type_notes） |
 | 2026-03-30 | ワークフローをNode.js 24に更新 |
 | 2026-03-23 | README/OPERATIONSを分割。ブランチ運用ルールを追加 |
 | 2026-03-15 | テストシート行上限（1700行）超過エラーを解消（`values.append + INSERT_ROWS` に変更） |
